@@ -1,0 +1,9 @@
+- Sensor C02
+- Juntar el codigo de los sensores(fácil) + ahorro de enegía?
+- Juntar codigo sensores con codigo Thingsboard
+- Set thingsboard
+- mandar mensajes a Telegram cada vez que se hace una lectura + comando de lectura a placer(Si sobra tiempo)
+- hacer las 9 cajas y tomar datos durante 1 semana aprox
+- Rellenar la memoria:
+	· Proyectos relacionados (De la intro)
+	· El resto 

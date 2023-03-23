@@ -1,0 +1,43 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "C:/Users/user2/Desktop/esp32-main/esp32-main/03_spi/build/CMakeFiles/bootloader"
+		},
+		{
+			"file" : "C:/Users/user2/Desktop/esp32-main/esp32-main/03_spi/build/CMakeFiles/bootloader.rule"
+		},
+		{
+			"file" : "C:/Users/user2/Desktop/esp32-main/esp32-main/03_spi/build/CMakeFiles/bootloader-complete.rule"
+		},
+		{
+			"file" : "C:/Users/user2/Desktop/esp32-main/esp32-main/03_spi/build/bootloader-prefix/src/bootloader-stamp/bootloader-build.rule"
+		},
+		{
+			"file" : "C:/Users/user2/Desktop/esp32-main/esp32-main/03_spi/build/bootloader-prefix/src/bootloader-stamp/bootloader-configure.rule"
+		},
+		{
+			"file" : "C:/Users/user2/Desktop/esp32-main/esp32-main/03_spi/build/bootloader-prefix/src/bootloader-stamp/bootloader-download.rule"
+		},
+		{
+			"file" : "C:/Users/user2/Desktop/esp32-main/esp32-main/03_spi/build/bootloader-prefix/src/bootloader-stamp/bootloader-install.rule"
+		},
+		{
+			"file" : "C:/Users/user2/Desktop/esp32-main/esp32-main/03_spi/build/bootloader-prefix/src/bootloader-stamp/bootloader-mkdir.rule"
+		},
+		{
+			"file" : "C:/Users/user2/Desktop/esp32-main/esp32-main/03_spi/build/bootloader-prefix/src/bootloader-stamp/bootloader-patch.rule"
+		},
+		{
+			"file" : "C:/Users/user2/Desktop/esp32-main/esp32-main/03_spi/build/bootloader-prefix/src/bootloader-stamp/bootloader-update.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"bootloader"
+		],
+		"name" : "bootloader"
+	}
+}
