@@ -7,3 +7,4 @@
 - Rellenar la memoria:
 	· Proyectos relacionados (De la intro)
 	· El resto 
+- Añadir codigo para permitir OTAs
