@@ -1,0 +1,1 @@
+int update_firmware_OTA();

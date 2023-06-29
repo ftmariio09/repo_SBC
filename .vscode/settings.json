@@ -1,5 +1,6 @@
 {
     "files.associations": {
         "stdio.h": "c"
-    }
+    },
+    "cmake.sourceDirectory": "C:/Users/ftmar/repo_SBC/codigo/deep_sleep"
 }
