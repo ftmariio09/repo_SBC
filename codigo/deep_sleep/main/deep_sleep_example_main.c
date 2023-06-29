@@ -97,7 +97,7 @@ void app_main(void)
     HR[num_lecturas] = get_humedad();
     vTaskDelay(1000);
     CO2[num_lecturas] = get_carbono();
-    printf("\n\n----------------- TimeStamp --------------------");
+    printf("\n\n----------------- TimeStamp  VERISION 3  --------------------");
     printf("\nSeconds: %lld", tv_now.tv_sec);
     printf("\nMicro Seconds: %ld\n", tv_now.tv_usec);
     time_stamps[num_lecturas] = tv_now.tv_sec * 1000 + tv_now.tv_usec / 1000;;
