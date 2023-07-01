@@ -97,7 +97,7 @@ void app_main(void)
     HR[num_lecturas] = get_humedad();
     vTaskDelay(1000);
     CO2[num_lecturas] = get_carbono();
-    printf("\n\n----------------- TimeStamp  VERISION 3  --------------------");
+    printf("\n\n----------------- TimeStamp  VERISION 2  --------------------");
     printf("\nSeconds: %lld", tv_now.tv_sec);
     printf("\nMicro Seconds: %ld\n", tv_now.tv_usec);
     time_stamps[num_lecturas] = tv_now.tv_sec * 1000 + tv_now.tv_usec / 1000;;
@@ -107,7 +107,7 @@ void app_main(void)
 
     
 
-    if (num_lecturas == NUM_OF_DATA)
+    if (num_lecturas == 1)
     {
         exito = iniciar_wifi();
         
@@ -132,7 +132,8 @@ void app_main(void)
             ultima_hora = timeinfo.tm_hour;
         }
         
-        if (timeinfo.tm_hour != ultima_hora)
+        // if (timeinfo.tm_hour != ultima_hora)
+        if (1)
         {
             ota_res = update_firmware_OTA();
             if (ota_res != 1)

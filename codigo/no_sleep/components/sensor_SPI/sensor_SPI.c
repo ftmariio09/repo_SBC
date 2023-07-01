@@ -112,8 +112,8 @@ float get_ruido()
     while(cont < (1000)){
         if (cont % 100 == 0 && cont > 1)
         {
-            printf("\nRUIDO_MAX : %d", max_2);
-            printf("\nRUIDO_ACTUAL : %d", actual_raw);
+            // printf("\nRUIDO_MAX : %d", max_2);
+            // printf("\nRUIDO_ACTUAL : %d", actual_raw);
             valor_media += max_2;
             contador_media +=1;
             max_2 = 0;
