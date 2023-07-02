@@ -21,7 +21,7 @@
 
 #define NUM_OF_DATA CONFIG_NUM_OF_DATA
 
-static const char *TAG = "Deep_Sleep_MAIN";
+static const char *TAG = "Deep_Sleep_V4";
 
 static RTC_DATA_ATTR struct timeval sleep_enter_time;
 
@@ -40,7 +40,7 @@ static void initialize_sntp(void);
 
 void app_main(void)
 {   
-    ESP_LOGI(TAG, "Esta el la ultima version de deep_sleep.");
+    // ESP_LOGI(TAG, "Esta el la ultima version de deep_sleep.");
     int exito = 0;
     int exito_thingsboard = 0;
 
@@ -58,7 +58,7 @@ void app_main(void)
     localtime_r(&now, &timeinfo);
     // Is time set? If not, tm_year will be (1970 - 1900).
     if (timeinfo.tm_year < (2016 - 1900)) {
-        ESP_LOGI(TAG, "Time is not set yet. Connecting to WiFi and getting time over NTP.");
+        ESP_LOGW(TAG, "Time is not set yet. Connecting to WiFi and getting time over NTP.");
         obtain_time();
         // update 'now' variable with current time
         time(&now);
@@ -81,25 +81,25 @@ void app_main(void)
     switch (esp_sleep_get_wakeup_cause()) {
 
         case ESP_SLEEP_WAKEUP_TIMER: {
-            printf("Wake up from timer. Time spent in deep sleep: %dms\n", sleep_time_ms);
+            ESP_LOGI(TAG,"Wake up from timer. Time spent in deep sleep: %dms\n", sleep_time_ms);
             break;
         }
         case ESP_SLEEP_WAKEUP_UNDEFINED:
         default:
-            printf("Not a deep sleep reset\n");
+            ESP_LOGI(TAG,"Not a deep sleep reset\n");
     }
 
 
     luz[num_lecturas] = get_luz();
-    vTaskDelay(1000);
+    vTaskDelay(100);
     temperatura[num_lecturas] = get_temperatura();
-    vTaskDelay(20);
+    vTaskDelay(100);
     HR[num_lecturas] = get_humedad();
-    vTaskDelay(1000);
+    vTaskDelay(100);
     CO2[num_lecturas] = get_carbono();
-    printf("\n\n----------------- TimeStamp  VERISION 2  --------------------");
-    printf("\nSeconds: %lld", tv_now.tv_sec);
-    printf("\nMicro Seconds: %ld\n", tv_now.tv_usec);
+    ESP_LOGI(TAG,"----------------- TimeStamp  VERISION 4  --------------------");
+    ESP_LOGI(TAG,"Seconds: %lld", tv_now.tv_sec);
+    ESP_LOGI(TAG,"Micro Seconds: %ld\n", tv_now.tv_usec);
     time_stamps[num_lecturas] = tv_now.tv_sec * 1000 + tv_now.tv_usec / 1000;;
 
 
@@ -116,10 +116,11 @@ void app_main(void)
         {
             for (int i = 0; i < NUM_OF_DATA; i++)
             {   
-                printf("\n\nTimestamp: %lld", time_stamps[i]);
-                printf("\nLUZ : %f", luz[i]);
-                printf("\nHumedad Relativa : %f", HR[i]);
-                printf("\nTemperatura : %f\n", temperatura[i]);
+                ESP_LOGI(TAG,"Timestamp: %lld", time_stamps[i]);
+                ESP_LOGI(TAG,"LUZ : %f", luz[i]);
+                ESP_LOGI(TAG,"Humedad Relativa : %f", HR[i]);
+                ESP_LOGI(TAG,"Temperatura : %f", temperatura[i]);
+                ESP_LOGI(TAG,"CO2 : %f\n", CO2[i]);
             }
         }
         else
@@ -146,7 +147,7 @@ void app_main(void)
         num_lecturas = 0;
     }
 
-    printf("\nNumber of data measurements: %d / %d\n", num_lecturas, NUM_OF_DATA);
+    ESP_LOGI(TAG,"\nNumber of data measurements: %d / %d\n", num_lecturas, NUM_OF_DATA);
     
 
 
@@ -154,7 +155,7 @@ void app_main(void)
     //vTaskDelay(1000 / portTICK_PERIOD_MS);
 
     const int wakeup_time_sec = 20;  // 300 = 5 min
-    printf("Enabling timer wakeup, %ds\n", wakeup_time_sec);
+    ESP_LOGI(TAG,"Enabling timer wakeup, %ds\n", wakeup_time_sec);
     esp_sleep_enable_timer_wakeup(wakeup_time_sec * 1000000);
 
 #if CONFIG_IDF_TARGET_ESP32
@@ -164,7 +165,7 @@ void app_main(void)
     rtc_gpio_isolate(GPIO_NUM_12);
 #endif
 
-    printf("Entering deep sleep\n");
+    ESP_LOGI(TAG,"Entering deep sleep\n");
     gettimeofday(&sleep_enter_time, NULL);
 
     esp_deep_sleep_start();
