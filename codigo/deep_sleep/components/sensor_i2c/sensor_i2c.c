@@ -23,6 +23,8 @@ uint8_t Lux_data[2];
 uint8_t THR_data[6];
 uint8_t CO2_data[9];
 
+static const char *TAG_i2c = "sensores_i2c";
+
 
 i2c_config_t conf = {
 	.mode = I2C_MODE_MASTER,
@@ -178,48 +180,26 @@ float convertir_Luz(uint16_t luz)
 
 float get_luz()
 {
-
-    float luz;
-
-    leer_luz(Lux_data);
-    luz = convertir_Luz(Lux_data[0] | (Lux_data[1] << 8));
-
-    return luz;
-
+	ESP_LOGI(TAG_i2c, "Dentro get_luz()");
+    return 112.0;
 }
 
 float get_temperatura()
 {
-
-    float temp;
-
-    leer_THR(THR_data);
-    temp = convertir_Temp(THR_data[0] << 8  | (THR_data[1] ));
-
-    return temp;
-
+	ESP_LOGI(TAG_i2c, "Dentro get_temperatura()");
+    return 28.0;
 }
 
 float get_humedad()
 {
-
-    float hum;
-
-    hum = convertir_HR(THR_data[3] << 8| (THR_data[4]));
-
-    return hum;
+	ESP_LOGI(TAG_i2c, "Dentro get_humedad()");
+    return 45.0;
 
 }
 
 float get_carbono()
 {
-
-    float CO2;
-
-    leer_carbono(CO2_data);
-    CO2 = convertir_co2((CO2_data[0]),(CO2_data[1])) / 100.0 ;
-	printf("CO2: %f", CO2);
-
-    return CO2;
+	ESP_LOGI(TAG_i2c, "Dentro get_carbono()");
+    return 545.0;
 
 }

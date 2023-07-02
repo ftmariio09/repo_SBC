@@ -36,7 +36,7 @@ static const char *bind_interface_name = "sta";
 #endif
 #endif
 
-static const char *TAG = "OTA :  ";
+static const char *TAG = "OTA ";
 extern const uint8_t server_cert_pem_start[] asm("_binary_ca_cert_pem_start");
 extern const uint8_t server_cert_pem_end[] asm("_binary_ca_cert_pem_end");
 
@@ -75,7 +75,7 @@ esp_err_t _http_event_handler(esp_http_client_event_t *evt)
 
 int update_firmware_OTA()
 {
-    ESP_LOGI(TAG, "\n+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\nStarting OTA example V3\n+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+    ESP_LOGI(TAG, "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\nStarting OTA\n+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 #ifdef CONFIG_EXAMPLE_FIRMWARE_UPGRADE_BIND_IF
     esp_netif_t *netif = get_example_netif_from_desc(bind_interface_name);
     if (netif == NULL) {
@@ -126,10 +126,10 @@ int update_firmware_OTA()
 
     // esp_err_t ret = esp_https_ota(&config);
     if (ret == ESP_OK) {
-        ESP_LOGE(TAG, "\n=======================================================================================\nFirmware Downloaded correctly. RESTARTING\n=======================================================================================");
+        ESP_LOGI(TAG, "=======================================================================================\nFirmware Downloaded correctly. RESTARTING\n=======================================================================================");
         esp_restart();
     } else {
-        ESP_LOGE(TAG, "\n=======================================================================================\nDOWNLOADING FIRMWARE FAILED. EXITING\n=======================================================================================");
+        ESP_LOGE(TAG, "=======================================================================================\nDOWNLOADING FIRMWARE FAILED. EXITING\n=======================================================================================");
         return 1;
     }
     // while (1) {
