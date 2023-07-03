@@ -15,8 +15,7 @@ classDiagram
         -float time_stamps[]
         
         +app_main()
-        -obtain_time()
-        -initialize_sntp()
+
 
     }
 
@@ -60,12 +59,26 @@ classDiagram
     class thingsboard{
         -esp_mqtt_client_config_t mqtt_cfg
         -mqtt_event_handler()
-        +enviar_datos(time_stamps[], luz[], temp[], HR[])
+        +enviar_datos(time_stamps[], luz[], temp[], HR[], CO2[])
+    }
+
+    class tiempo{
+        +obtener_tiempo()
+        -initialize_sntp()
+    }
+
+    class ota{
+        -get_sha256_of_partitions()
+        -print_sha256()
+        +update_firmware_OTA()
     }
 
     main --> conexion_wifi
     main --> sensor_i2c
     main --> sensor_SPI
     main --> thingsboard
+    main --> tiempo
+    main --> ota
+
 
 ```

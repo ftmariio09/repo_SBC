@@ -18,6 +18,7 @@
 #include "conexion_wifi.h"
 #include "thingsboard.h"
 #include "ota.h"
+#include "tiempo.h"
 
 #define NUM_OF_DATA CONFIG_NUM_OF_DATA
 
@@ -33,9 +34,6 @@ RTC_DATA_ATTR int64_t time_stamps[NUM_OF_DATA];
 static RTC_DATA_ATTR int num_lecturas = 0;
 
 RTC_DATA_ATTR int ultima_hora = -1;
-
-static void obtain_time(void);
-static void initialize_sntp(void);
 
 
 void app_main(void)
@@ -59,7 +57,7 @@ void app_main(void)
     // Is time set? If not, tm_year will be (1970 - 1900).
     if (timeinfo.tm_year < (2016 - 1900)) {
         ESP_LOGW(TAG, "Time is not set yet. Connecting to WiFi and getting time over NTP.");
-        obtain_time();
+        obtener_tiempo();
         // update 'now' variable with current time
         time(&now);
         char strftime_buf[64];
@@ -169,77 +167,4 @@ void app_main(void)
     gettimeofday(&sleep_enter_time, NULL);
 
     esp_deep_sleep_start();
-}
-
-
-
-//Functions to set the time
-
-static void obtain_time(void)
-{
-    /**
-     * NTP server address could be aquired via DHCP,
-     * see following menuconfig options:
-     * 'LWIP_DHCP_GET_NTP_SRV' - enable STNP over DHCP
-     * 'LWIP_SNTP_DEBUG' - enable debugging messages
-     *
-     * NOTE: This call should be made BEFORE esp aquires IP address from DHCP,
-     * otherwise NTP option would be rejected by default.
-     */
-#ifdef LWIP_DHCP_GET_NTP_SRV
-    sntp_servermode_dhcp(1);      // accept NTP offers from DHCP server, if any
-#endif
-
-    if (iniciar_wifi())
-    {
-        initialize_sntp();
-
-        // wait for time to be set
-        time_t now = 0;
-        struct tm timeinfo = { 0 };
-        int retry = 0;
-        const int retry_count = 15;
-        while (sntp_get_sync_status() == SNTP_SYNC_STATUS_RESET && ++retry < retry_count) {
-            ESP_LOGI(TAG, "Waiting for system time to be set... (%d/%d)", retry, retry_count);
-            vTaskDelay(2000 / portTICK_PERIOD_MS);
-        }
-        time(&now);
-        localtime_r(&now, &timeinfo);
-
-        parar_wifi();
-    }
-
-}
-
-static void initialize_sntp(void)
-{
-    ESP_LOGI(TAG, "Initializing SNTP");
-    sntp_setoperatingmode(SNTP_OPMODE_POLL);
-
-/*
- * If 'NTP over DHCP' is enabled, we set dynamic pool address
- * as a 'secondary' server. It will act as a fallback server in case that address
- * provided via NTP over DHCP is not accessible
- */
-#if LWIP_DHCP_GET_NTP_SRV && SNTP_MAX_SERVERS > 1
-    sntp_setservername(1, "pool.ntp.org");
-
-#if LWIP_IPV6 && SNTP_MAX_SERVERS > 2          // statically assigned IPv6 address is also possible
-    ip_addr_t ip6;
-    if (ipaddr_aton("2a01:3f7::1", &ip6)) {    // ipv6 ntp source "ntp.netnod.se"
-        sntp_setserver(2, &ip6);
-    }
-#endif  /* LWIP_IPV6 */
-
-#else   /* LWIP_DHCP_GET_NTP_SRV && (SNTP_MAX_SERVERS > 1) */
-    // otherwise, use DNS address from a pool
-    sntp_setservername(0, CONFIG_SNTP_TIME_SERVER);
-
-    sntp_setservername(1, "pool.ntp.org");     // set the secondary NTP server (will be used only if SNTP_MAX_SERVERS > 1)
-#endif
-
-#ifdef CONFIG_SNTP_TIME_SYNC_METHOD_SMOOTH
-    sntp_set_sync_mode(SNTP_SYNC_MODE_SMOOTH);
-#endif
-    sntp_init();
 }

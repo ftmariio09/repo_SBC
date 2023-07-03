@@ -7,8 +7,12 @@ flowchart LR
     init([Inicio])
     main(main)
     iftime{"¿reloj en hora?"}
-    time(obtener_tiempo)
-
+    time(obtain_time)
+    sntp("iniciar_wifi
+    initialize_sntp
+    actualizar hora
+    parar_wifi")
+    sleep(sleep)
 
 
 
@@ -20,28 +24,31 @@ flowchart LR
 
     enviardatos("iniciar_wifi
     enviar_datos
-    ¿ota?
     parar_wifi")
 
     iflecturas{"num_lecturas
      == 
      NUM_OF_DATA"}
 
-    
-    ruido(get_ruido)
 
+
+    wakeup(set wakeup timer)
 
     init --> main
 
     main --> iftime
-    iftime -->|si| ruido
-    ruido --> datos
+    iftime -->|si| datos
     iftime -->|no| time
-    time --> ruido
+    time --> sntp
+    sntp --> time
+    time --> datos
 
     datos --> iflecturas
     iflecturas -->|true| enviardatos
-    iflecturas -->|false| main
-    enviardatos --> main
+    iflecturas -->|false| wakeup
+    enviardatos --> wakeup
+    wakeup --> sleep
+    sleep --> main
+
 
 ```
