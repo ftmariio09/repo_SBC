@@ -25,23 +25,22 @@
 
 static const char *TAG = "Deep_Sleep_MAIN";
 
-static RTC_DATA_ATTR struct timeval sleep_enter_time;
+static struct timeval sleep_enter_time;
 
-RTC_DATA_ATTR float luz[NUM_OF_DATA];
-RTC_DATA_ATTR float HR[NUM_OF_DATA];
-RTC_DATA_ATTR float ruido[NUM_OF_DATA];
-RTC_DATA_ATTR float CO2[NUM_OF_DATA];
-RTC_DATA_ATTR float temperatura[NUM_OF_DATA];
-RTC_DATA_ATTR int64_t time_stamps[NUM_OF_DATA];
-static RTC_DATA_ATTR int num_lecturas = 0;
+float luz[NUM_OF_DATA];
+float HR[NUM_OF_DATA];
+float ruido[NUM_OF_DATA];
+float CO2[NUM_OF_DATA];
+float temperatura[NUM_OF_DATA];
+int64_t time_stamps[NUM_OF_DATA];
+static int num_lecturas = 0;
 
-RTC_DATA_ATTR int ultima_hora;
+int ultima_hora;
 
-SemaphoreHandle_t semaforo;
+void app_main(void)
+{   
+    ESP_LOGI(TAG, "Esta el la ultima version de deep_sleep.");
 
-float ultimo_ruido;
-
-void tarea_Principal(void *parameters){
     int exito = 0;
     int exito_thingsboard = 0;
 
@@ -56,26 +55,23 @@ void tarea_Principal(void *parameters){
     struct timeval tv_now;
 
     configurar_i2c();
-
-    exito = iniciar_wifi();
+    spi_init();
 
     while (1)
     {
-        // if (!exito)
-        // {
-        //     exito = iniciar_wifi();
-        // }
-        
         time(&now);
         localtime_r(&now, &timeinfo);
-        // Is time set? If not, tm_year will be (1970 - 1900).
         if (timeinfo.tm_year < (2016 - 1900)) {
+            exito = iniciar_wifi();
+
             ESP_LOGI(TAG, "Time is not set yet. Connecting to WiFi and getting time over NTP.");
             obtener_tiempo();
-            // update 'now' variable with current time
+
+            parar_wifi();
+
             time(&now);
             char strftime_buf[64];
-            // Set timezone to Madrid time
+
             setenv("TZ", "CET-1CEST,M3.5.0,M10.5.0/3", 1);
             tzset();
 
@@ -83,13 +79,11 @@ void tarea_Principal(void *parameters){
             strftime(strftime_buf, sizeof(strftime_buf), "%c", &timeinfo);
             ESP_LOGI(TAG, "The current date/time in Madrid is: %s", strftime_buf);
         }
-        printf("Esperando que termina ruido");
-        xSemaphoreTake(semaforo, portMAX_DELAY);
+
         gettimeofday(&tv_now, NULL);
 
 
-        ruido[num_lecturas] = ultimo_ruido;
-
+        ruido[num_lecturas] = get_ruido();
 
         luz[num_lecturas] = get_luz();
         vTaskDelay(1000);
@@ -98,9 +92,9 @@ void tarea_Principal(void *parameters){
         HR[num_lecturas] = get_humedad();
         vTaskDelay(1000);
         CO2[num_lecturas] = get_carbono();
-        printf("\n\n----------------- TimeStamp --------------------");
-        printf("\nSeconds: %lld", tv_now.tv_sec);
-        printf("\nMicro Seconds: %ld\n", tv_now.tv_usec);
+        ESP_LOGI(TAG,"----------------- TimeStamp  VERISION 4  --------------------");
+        ESP_LOGI(TAG,"Seconds: %lld", tv_now.tv_sec);
+        ESP_LOGI(TAG,"Micro Seconds: %ld\n", tv_now.tv_usec);
         time_stamps[num_lecturas] = tv_now.tv_sec * 1000 + tv_now.tv_usec / 1000;;
 
 
@@ -108,7 +102,7 @@ void tarea_Principal(void *parameters){
 
         if (num_lecturas == NUM_OF_DATA)
         {
-            // exito = iniciar_wifi();
+            exito = iniciar_wifi();
 
             printf("Wifi inicializado");
             
@@ -117,10 +111,12 @@ void tarea_Principal(void *parameters){
             {
                 for (int i = 0; i < NUM_OF_DATA; i++)
                 {   
-                    printf("\n\nTimestamp: %lld", time_stamps[i]);
-                    printf("\nLUZ : %f", luz[i]);
-                    printf("\nHumedad Relativa : %f", HR[i]);
-                    printf("\nTemperatura : %f\n", temperatura[i]);
+                    ESP_LOGI(TAG,"Timestamp: %lld", time_stamps[i]);
+                    ESP_LOGI(TAG,"LUZ : %f", luz[i]);
+                    ESP_LOGI(TAG,"Humedad Relativa : %f", HR[i]);
+                    ESP_LOGI(TAG,"Temperatura : %f", temperatura[i]);
+                    ESP_LOGI(TAG,"CO2 : %f\n", CO2[i]);
+                    ESP_LOGI(TAG,"Ruido : %f\n", ruido[i]);
                 }
             }
             else
@@ -130,7 +126,7 @@ void tarea_Principal(void *parameters){
             
             if (timeinfo.tm_hour != ultima_hora)
             {
-                // ota_res = update_firmware_OTA();
+                ota_res = update_firmware_OTA();
                 ota_res = 1;
                 if (ota_res != 1)
                 {
@@ -138,8 +134,7 @@ void tarea_Principal(void *parameters){
                 }
             }
             
-            // parar_wifi();
-            printf("Wifi parado");
+            parar_wifi();
             num_lecturas = 0;
         }
 
@@ -147,30 +142,6 @@ void tarea_Principal(void *parameters){
     }
 }
 
-void tarea_micro(void *parameters)
-{
-    int ruido = 0;
-    spi_init();
-    while (1)
-    {
-        ultimo_ruido = get_ruido();
-        xSemaphoreGive(semaforo);
-    }
-}
-
-
-
-
-void app_main(void)
-{   
-    ESP_LOGI(TAG, "Esta el la ultima version de deep_sleep.");
-
-    semaforo = xSemaphoreCreateBinary();
-
-    xTaskCreate(tarea_Principal, "tarea_Principal", 4096, NULL, 5, NULL);
-    xTaskCreate(tarea_micro, "tarea_micro", 4096, NULL, 5, NULL);
-
-}
 
 
 

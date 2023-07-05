@@ -33,12 +33,11 @@ RTC_DATA_ATTR float CO2[NUM_OF_DATA];
 RTC_DATA_ATTR int64_t time_stamps[NUM_OF_DATA];
 static RTC_DATA_ATTR int num_lecturas = 0;
 
-RTC_DATA_ATTR int ultima_hora = -1;
+RTC_DATA_ATTR int ultimo_dia = -1;
 
 
 void app_main(void)
 {   
-    // ESP_LOGI(TAG, "Esta el la ultima version de deep_sleep.");
     int exito = 0;
     int exito_thingsboard = 0;
 
@@ -107,7 +106,7 @@ void app_main(void)
 
     
 
-    if (num_lecturas == 1)
+    if (num_lecturas == NUM_OF_DATA)
     {
         exito = iniciar_wifi();
         
@@ -128,18 +127,18 @@ void app_main(void)
             ESP_LOGE(TAG, "No se pudo subir los datos a Thingsboard");
         }
         
-        if (ultima_hora == -1)
+        if (ultima_dia == -1)
         {
-            ultima_hora = timeinfo.tm_hour;
+            ultima_dia = timeinfo.tm_yday;
         }
         
-        // if (timeinfo.tm_hour != ultima_hora)
-        if (1)
+        // if (1)
+        if (timeinfo.tm_yday != ultima_dia)
         {
             ota_res = update_firmware_OTA();
             if (ota_res != 1)
             {
-                ultima_hora = timeinfo.tm_hour;   
+                ultima_dia = timeinfo.tm_yday;   
             }
         }
         
@@ -154,7 +153,7 @@ void app_main(void)
 
     //vTaskDelay(1000 / portTICK_PERIOD_MS);
 
-    const int wakeup_time_sec = 20;  // 300 = 5 min
+    const int wakeup_time_sec = 300;  // 300 = 5 min
     ESP_LOGI(TAG,"Enabling timer wakeup, %ds\n", wakeup_time_sec);
     esp_sleep_enable_timer_wakeup(wakeup_time_sec * 1000000);
 
