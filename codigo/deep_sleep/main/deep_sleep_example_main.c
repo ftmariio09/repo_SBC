@@ -49,19 +49,21 @@ void app_main(void)
     time_t now;
     struct tm timeinfo;
 
-
     configurar_i2c();
-
     time(&now);
     localtime_r(&now, &timeinfo);
-    // Is time set? If not, tm_year will be (1970 - 1900).
+
     if (timeinfo.tm_year < (2016 - 1900)) {
-        ESP_LOGW(TAG, "Time is not set yet. Connecting to WiFi and getting time over NTP.");
+        exito = iniciar_wifi();
+
+        ESP_LOGI(TAG, "Time is not set yet. Connecting to WiFi and getting time over NTP.");
         obtener_tiempo();
-        // update 'now' variable with current time
+
+        parar_wifi();
+
         time(&now);
         char strftime_buf[64];
-        // Set timezone to Madrid time
+
         setenv("TZ", "CET-1CEST,M3.5.0,M10.5.0/3", 1);
         tzset();
 

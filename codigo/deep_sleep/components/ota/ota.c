@@ -87,15 +87,6 @@ int update_firmware_OTA()
     ESP_LOGI(TAG, "Bind interface name is %s", ifr.ifr_name);
 
 #endif
-//     esp_http_client_config_t config = {
-//         .url = CONFIG_EXAMPLE_FIRMWARE_UPGRADE_URL,
-//         .cert_pem = (char *)server_cert_pem_start,
-//         .event_handler = _http_event_handler,
-//         .keep_alive_enable = true,
-// #ifdef CONFIG_EXAMPLE_FIRMWARE_UPGRADE_BIND_IF
-//         .if_name = &ifr,
-// #endif
-    // };
 
 
     esp_http_client_config_t config = {

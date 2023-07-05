@@ -15,7 +15,8 @@
         "mutex": "c",
         "random": "c",
         "limits": "c",
-        "semaphore": "c"
+        "semaphore": "c",
+        "mqtt_client.h": "c"
     },
     "idf.flashType": "UART"
 }

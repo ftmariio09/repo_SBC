@@ -142,7 +142,7 @@ menu "Example Configuration"
             string "Thingsboard username"
             default "UVbEFDn8v4GKb3gMwAkK"
             help
-                username.
+                thingsboard device access token.
                 
         config THINGSBOARD_MQTT_CLIENT_ID
             string "Thingsboard client ID"

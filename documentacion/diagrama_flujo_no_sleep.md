@@ -5,9 +5,11 @@
 flowchart LR
 
     init([Inicio])
-    main(main)
+    main(app_main)
     iftime{"¿reloj en hora?"}
-    time(obtener_tiempo)
+    time("iniciar_wifi
+    obtener_tiempo
+    parar_wifi")
 
 
 
@@ -20,7 +22,7 @@ flowchart LR
 
     enviardatos("iniciar_wifi
     enviar_datos
-    ¿ota?
+    ¿ ota ?
     parar_wifi")
 
     iflecturas{"num_lecturas

@@ -28,26 +28,19 @@ void obtener_tiempo(void)
     sntp_servermode_dhcp(1);      // accept NTP offers from DHCP server, if any
 #endif
 
-    // if (iniciar_wifi())
-    if (1)
-    {
-        initialize_sntp();
+    initialize_sntp();
 
-        // wait for time to be set
-        time_t now = 0;
-        struct tm timeinfo = { 0 };
-        int retry = 0;
-        const int retry_count = 15;
-        while (sntp_get_sync_status() == SNTP_SYNC_STATUS_RESET && ++retry < retry_count) {
-            ESP_LOGI(TAG, "Waiting for system time to be set... (%d/%d)", retry, retry_count);
-            vTaskDelay(2000 / portTICK_PERIOD_MS);
-        }
-        time(&now);
-        localtime_r(&now, &timeinfo);
-
-        // parar_wifi();
+    // wait for time to be set
+    time_t now = 0;
+    struct tm timeinfo = { 0 };
+    int retry = 0;
+    const int retry_count = 15;
+    while (sntp_get_sync_status() == SNTP_SYNC_STATUS_RESET && ++retry < retry_count) {
+        ESP_LOGI(TAG, "Waiting for system time to be set... (%d/%d)", retry, retry_count);
+        vTaskDelay(2000 / portTICK_PERIOD_MS);
     }
-
+    time(&now);
+    localtime_r(&now, &timeinfo);
 }
 
 void initialize_sntp(void)
